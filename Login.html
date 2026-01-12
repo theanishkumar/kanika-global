@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+  <style>
+    body { font-family: 'Segoe UI', sans-serif; background: #0f172a; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+    .login-box { background: white; padding: 40px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); width: 320px; text-align: center; }
+    h2 { color: #0f172a; margin-bottom: 25px; font-size: 20px; border-bottom: 2px solid #06b6d4; padding-bottom: 10px; }
+    input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; font-size: 14px; }
+    button { width: 100%; padding: 12px; background: #06b6d4; border: none; color: white; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 14px; margin-top: 10px; transition: 0.3s; }
+    button:hover { background: #0891b2; }
+    #msg { color: #e11d48; font-size: 13px; margin-top: 15px; min-height: 18px; }
+    .logo { font-size: 40px; margin-bottom: 10px; }
+  </style>
+</head>
+<body>
+
+<div class="login-box">
+  <div class="logo">📦</div>
+  <h2>KANIKA GLOBAL</h2>
+  <input type="text" id="user" placeholder="Username">
+  <input type="password" id="pass" placeholder="Password">
+  <button id="loginBtn" onclick="login()">LOGIN TO SYSTEM</button>
+  <div id="msg"></div>
+</div>
+
+<script>
+  function login() {
+    const user = document.getElementById('user').value;
+    const pass = document.getElementById('pass').value;
+    const msg = document.getElementById('msg');
+    const btn = document.getElementById('loginBtn');
+    
+    if(!user || !pass) {
+      msg.innerHTML = "Please enter both fields!";
+      return;
+    }
+
+    msg.style.color = "#06b6d4";
+    msg.innerHTML = "Verifying credentials...";
+    btn.disabled = true;
+    btn.style.opacity = "0.7";
+    
+    google.script.run
+      .withSuccessHandler(function(res) {
+        if (res.success) {
+          document.open();
+          document.write(res.html);
+          document.close();
+        } else {
+          msg.style.color = "#e11d48";
+          msg.innerHTML = res.message;
+          btn.disabled = false;
+          btn.style.opacity = "1";
+        }
+      })
+      .checkLogin(user, pass);
+  }
+
+  // Allow "Enter" key to login
+  document.addEventListener('keypress', function (e) {
+    if (e.key === 'Enter') login();
+  });
+</script>
+
+</body>
+</html>
